@@ -1,18 +1,21 @@
 import os
 import argparse
-from tqdm import tqdm
+
 
 
 def main():
     args = get_args()
     input_path = os.path.expanduser(args.input)
-    # print(os.listdir(input_path))
+
     for path, subdirs, files in os.walk(input_path):
         for subdir in subdirs:
-            for file in os.listdir(os.path.join(path, subdir)):
-                print(rename(subdir, file))
-    # for file in tqdm(os.listdir(input_path)):
-    # print(input_path + "/" + file, rename(input_path, file))
+            path_to = os.path.join(path, subdir)
+            for file in os.listdir(path_to):
+                os.rename(
+                    os.path.join(path_to, file),
+                    os.path.join(path_to, rename(subdir, file, path_to)),
+                )
+    
 
 
 def get_args():
@@ -26,8 +29,26 @@ def get_args():
     return args
 
 
-def rename(parent_directory: str, file: str):
-    return parent_directory + "-" + file
+def rename(parent_directory: str, file: str, path_to: str):
+    if (
+        file.__contains__("Season")
+        or file.__contains__("season")
+        or file.__contains__(parent_directory)
+    ):
+        return file
+
+    if parent_directory.__contains__("Season") or parent_directory.__contains__(
+        "season"
+    ):
+        path_items = path_to.split("\\")
+        return (
+            path_items[-2].replace(" ", "_")
+            + "-"
+            + path_items[-1].replace("eason", "").replace("s", "S").replace("_", "")
+            + file
+        )
+
+    return parent_directory.replace(" ", "_") + "-" + file
 
 
 if __name__ == "__main__":
