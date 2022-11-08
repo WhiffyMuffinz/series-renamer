@@ -1,6 +1,6 @@
 import os
 import argparse
-
+import re
 
 
 def main():
@@ -15,7 +15,6 @@ def main():
                     os.path.join(path_to, file),
                     os.path.join(path_to, rename(subdir, file, path_to)),
                 )
-    
 
 
 def get_args():
@@ -34,6 +33,7 @@ def rename(parent_directory: str, file: str, path_to: str):
         file.__contains__("Season")
         or file.__contains__("season")
         or file.__contains__(parent_directory)
+        or re.search("[\w]+-(S\d)?E\d?\d\d.\w+", file)
     ):
         return file
 
@@ -44,7 +44,11 @@ def rename(parent_directory: str, file: str, path_to: str):
         return (
             path_items[-2].replace(" ", "_")
             + "-"
-            + path_items[-1].replace("eason", "").replace("s", "S").replace("_", "")
+            + path_items[-1]
+            .replace("eason", "")
+            .replace("s", "S")
+            .replace("_", "")
+            .replace(" ", "")
             + file
         )
 
