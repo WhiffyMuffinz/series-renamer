@@ -15,6 +15,7 @@ def main():
                     os.path.join(path_to, file),
                     os.path.join(path_to, rename(subdir, file, path_to)),
                 )
+            # print(rename(subdir, file, path_to))
 
 
 def get_args():
@@ -30,17 +31,15 @@ def get_args():
 
 def rename(parent_directory: str, file: str, path_to: str):
     if (
-        file.__contains__("Season")
-        or file.__contains__("season")
+        re.search("^[Ss]eason\d?\w? ?\d", file)
         or file.__contains__(parent_directory)
         or re.search("[\w]+-(S\d)?E\d?\d\d.\w+", file)
     ):
         return file
 
-    if parent_directory.__contains__("Season") or parent_directory.__contains__(
-        "season"
-    ):
+    if re.search("^[Ss]eason\d?\w? ?\d", parent_directory):
         path_items = path_to.split("\\")
+        print("Season found")
         return (
             path_items[-2].replace(" ", "_")
             + "-"
